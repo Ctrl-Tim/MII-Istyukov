@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <!-- Bootstrap CDN -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+    </head>
+    <body>
+        <h4 style="color:crimson;" align="center">{{about}}</h4> <br><br>
+        <div style="text-align: center; ">
+             <form action='http://127.0.0.1:5000/summer_plot'>
+                <h2>Минимальная, максимальная, средняя цена открытия летом (во все года)</h2>
+                <input type="submit" value="Show">
+            </form>
+            <form action='http://127.0.0.1:5000/_plot'>
+                <h2>Минимальная, максимальная, средняя цена открытия зимой (по годам)</h2>
+                <input type="submit" value="Show">
+            </form>
+            <form action='http://127.0.0.1:5000/year/' method="GET">
+                <h2>Минимальная, максимальная, средняя цена за выбранный год</h2>
+                <input type="number" size=10 name="year" min=2000 max=2022 value=2000>
+                <input type="submit" value="Show">
+            </form>
+            <form action='http://127.0.0.1:5000/years_plot' method="GET">
+                <h2>Минимальная, максимальная, средняя цена открытия по годам</h2>
+                <input type="submit" value="Show">
+            </form>
+        </div>
+    </body>
+</html>
