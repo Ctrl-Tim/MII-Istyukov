@@ -1,8 +1,10 @@
+import numpy as np
 from flask import Flask, request, render_template, Response
 import pandas as pd
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
+from datetime import datetime, timedelta
 import io
 import json
 import plotly
@@ -20,12 +22,27 @@ task2 = "Минимальная, максимальная, средняя цен
 task3 = "Минимальная, максимальная, средняя цена за выбранный год"
 task4 = "Минимальная, максимальная, средняя цена открытия по годам"
 
+dates = pd.date_range(df.iloc[df['Date'].count()-1]['Date'], periods=(int)(df['Date'].count()*0.1))
 
+#дополнение данных
+for i in range(df.shape[0]-1, round(df.shape[0]*1.1), 1):
+    date = datetime.strptime(df['Date'].values[i], "%Y-%m-%d")
+    next_date = datetime.strftime(date + timedelta(days=1), "%Y-%m-%d") #следующий день
+    next_open = df['Open'].value_counts().rename_axis('Open').to_frame('counts').index[i%50]
+    next_high = df['High'].value_counts().rename_axis('High').to_frame('counts').index[i % 50]
+    next_low = df['Low'].value_counts().rename_axis('Low').to_frame('counts').index[i % 50]
+    next_close = df['Low'].value_counts().rename_axis('Low').to_frame('counts').index[i % 50]
+    next_low = df['Close'].value_counts().rename_axis('Close').to_frame('counts').index[i % 50]
+    next_volume = df['Volume'].value_counts().rename_axis('Volume').to_frame('counts').index[i % 50]
+    next_currency = 'USD'
+
+    new_row = [next_date, next_open, next_high, next_low, next_close, next_volume, next_currency]
+    df.loc[i+1] = new_row
 
 #начальная страница
 @app.route('/')
 def home():
-    return render_template("home.html", about=about)
+    return render_template("home.html", about=about) + df.to_html()
 
 @app.route('/summer_plot')
 def summer_plot():
