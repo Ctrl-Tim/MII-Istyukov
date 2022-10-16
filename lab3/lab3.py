@@ -14,8 +14,9 @@ app = Flask('__name__')
 
 df = pd.read_csv("coffee.csv")
 
-about = "Этот набор данных содержит информацию о ценах на кофе. Это даёт возможность для прогнозирования цен в будущем."
+about = "Этот набор данных содержит информацию о ценах на кофе. Это даёт возможность для прогнозирования цен в будущем. "
 nulldf = "В данном наборе данных отсутсвуют нулевые значения!"
+approximate = "Используемые данные (с приблизительными значениями на последующие года). "
 
 task1 = "Минимальная, максимальная, средняя цена открытия летом (во все года)"
 task2 = "Минимальная, максимальная, средняя цена открытия зимой (по годам)"
@@ -24,7 +25,7 @@ task4 = "Минимальная, максимальная, средняя цен
 
 dates = pd.date_range(df.iloc[df['Date'].count()-1]['Date'], periods=(int)(df['Date'].count()*0.1))
 
-#дополнение данных
+#дополнение данных приблизительными значениями
 for i in range(df.shape[0]-1, round(df.shape[0]*1.1), 1):
     date = datetime.strptime(df['Date'].values[i], "%Y-%m-%d")
     next_date = datetime.strftime(date + timedelta(days=1), "%Y-%m-%d") #следующий день
@@ -42,7 +43,13 @@ for i in range(df.shape[0]-1, round(df.shape[0]*1.1), 1):
 #начальная страница
 @app.route('/')
 def home():
-    return render_template("home.html", about=about) + df.to_html()
+    return render_template("home.html", about=about)
+
+
+#справочник
+@app.route('/df_info')
+def df_info():
+    return approximate + about + nulldf + df.to_html()
 
 @app.route('/summer_plot')
 def summer_plot():
@@ -79,6 +86,16 @@ def years_plot():
     fig = px.bar(df, x='year', y='Open', color='month', barmode='group')
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return render_template('plot.html', graphJSON=graphJSON, description=task4)
+
+@app.route("/year/", methods=['GET'])
+def year_open():
+    data = request.args;
+    df['year'] = pd.DatetimeIndex(df['Date']).year
+    select_year = df.loc[df['year'] == int(data['year'])].groupby('year').min()[['Open']]
+    select_year.rename(columns={'Open': 'Min Open'}, inplace=True)
+    select_year['Max Open'] = df.loc[df['year'] == int(data['year'])].groupby('year').max()[['Open']]
+    select_year['Mean Open'] = df.loc[df['year'] == int(data['year'])].groupby('year').mean()[['Open']].round(2)
+    return task3 + select_year.to_html(header="true", table_id="table")
 
 @app.route('/plot.png')
 def plot_png():
