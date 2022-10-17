@@ -1,11 +1,7 @@
 import numpy as np
 from flask import Flask, request, render_template, Response
 import pandas as pd
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
-import io
 import json
 import plotly
 import plotly.express as px
@@ -53,13 +49,22 @@ def df_info():
 
 @app.route('/summer_plot')
 def summer_plot():
-    df['year'] = pd.DatetimeIndex(df['Date']).year
-    summer = df.groupby('year').min()[['Open']].reset_index()
-    summer.rename(columns={'Open': 'Min Open'}, inplace=True)
-    summer['Max Open'] = df.groupby('year').max()[['Open']].reset_index(drop=True)
-    summer['Mean Open'] = df.groupby('year').mean()[['Open']].reset_index(drop=True)
+    # df['year'] = pd.DatetimeIndex(df['Date']).year
+    # summer = df.groupby('year').min()[['Open']].reset_index()
+    # summer.rename(columns={'Open': 'Min Open'}, inplace=True)
+    # summer['Max Open'] = df.groupby('year').max()[['Open']].reset_index(drop=True)
+    # summer['Mean Open'] = df.groupby('year').mean()[['Open']].reset_index(drop=True)
 
-    fig = px.bar(summer, x='year', y=["Min Open", "Mean Open", "Max Open"])
+    df['year'] = pd.DatetimeIndex(df['Date']).year
+    df['month'] = pd.DatetimeIndex(df['Date']).month
+    summer = df.loc[(df['month'] >= 6) & (df['month'] <= 8)].groupby('month').min()[['Open']].reset_index()
+    summer.rename(columns={'Open': 'Min Open'}, inplace=True)
+    summer['Max Open'] = df.loc[(df['month'] >= 6) & (df['month'] <= 8)].groupby('month').max()[['Open']].reset_index(drop=True)
+    summer['Mean Open'] = df.loc[(df['month'] >= 6) & (df['month'] <= 8)].groupby('month').mean()[['Open']].round(2).reset_index(drop=True)
+
+
+    fig = px.bar(summer, x='month', y=["Min Open", "Mean Open", "Max Open"])
+    fig.update_layout(legend=dict(font=dict(size=16)))
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return render_template('plot.html', graphJSON=graphJSON, description=task1)
 
@@ -70,12 +75,12 @@ def winter_plot():
     bf = df.loc[(df['month'] != 3) & (df['month'] != 4) & (df['month'] != 5) & (df['month'] != 6)
                 & (df['month'] != 7) & (df['month'] != 7) & (df['month'] != 8) & (df['month'] != 9) & (
                             df['month'] != 10) & (df['month'] != 11)]
-    winter = bf.groupby(['year', 'month']).min()[['Open']]
+    winter = bf.groupby(['year', 'month']).min()[['Open']].reset_index()
     winter.rename(columns={'Open': 'Min Open'}, inplace=True)
-    winter['Max Open'] = bf.groupby(['year', 'month']).max()[['Open']]
-    winter['Mean Open'] = bf.groupby(['year', 'month']).mean()[['Open']].round(2)
+    winter['Max Open'] = bf.groupby(['year', 'month']).max()[['Open']].reset_index(drop=True)
+    winter['Mean Open'] = bf.groupby(['year', 'month']).mean()[['Open']].round(2).reset_index(drop=True)
 
-    fig = px.bar(winter, x='year', y='Min Open', color='month', barmode='group')
+    fig = px.bar(winter, x='year', y=["Min Open", "Mean Open", "Max Open"], color='month')
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return render_template('plot.html', graphJSON=graphJSON, description=task2)
 
@@ -84,8 +89,10 @@ def years_plot():
     df['year'] = pd.DatetimeIndex(df['Date']).year
     df['month'] = pd.DatetimeIndex(df['Date']).month
     fig = px.bar(df, x='year', y='Open', color='month', barmode='group')
+    # fig = px.scatter(df, x='year', y='Open', color='month')
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return render_template('plot.html', graphJSON=graphJSON, description=task4)
+
 
 @app.route("/year/", methods=['GET'])
 def year_open():
@@ -97,26 +104,26 @@ def year_open():
     select_year['Mean Open'] = df.loc[df['year'] == int(data['year'])].groupby('year').mean()[['Open']].round(2)
     return task3 + select_year.to_html(header="true", table_id="table")
 
-@app.route('/plot.png')
-def plot_png():
-    fig = create_figure()
-    output = io.BytesIO()
-    FigureCanvas(fig).print_png(output)
-    return Response(output.getvalue(), mimetype='image/png')
-
-def create_figure():
-    fig, ax = plt.subplots(figsize = (6,4))
-    fig.patch.set_facecolor('#E8E5DA')
-
-    x = df.head().Date
-    y = df.head().Open
-
-    ax.bar(x, y, color = "#304C89")
-
-    plt.xticks(rotation = 30, size = 5)
-    plt.ylabel("Expected Clean Sheets", size = 5)
-
-    return fig
+# @app.route('/plot.png')
+# def plot_png():
+#     fig = create_figure()
+#     output = io.BytesIO()
+#     FigureCanvas(fig).print_png(output)
+#     return Response(output.getvalue(), mimetype='image/png')
+#
+# def create_figure():
+#     fig, ax = plt.subplots(figsize = (6,4))
+#     fig.patch.set_facecolor('#E8E5DA')
+#
+#     x = df.head().Date
+#     y = df.head().Open
+#
+#     ax.bar(x, y, color = "#304C89")
+#
+#     plt.xticks(rotation = 30, size = 5)
+#     plt.ylabel("Expected Clean Sheets", size = 5)
+#
+#     return fig
 
 
 
