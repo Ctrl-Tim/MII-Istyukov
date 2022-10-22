@@ -1,4 +1,3 @@
-import numpy as np
 from flask import Flask, request, render_template, Response
 import pandas as pd
 from datetime import datetime, timedelta
