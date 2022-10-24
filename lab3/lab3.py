@@ -35,6 +35,8 @@ for i in range(df.shape[0]-1, round(df.shape[0]*1.1), 1):
     new_row = [next_date, next_open, next_high, next_low, next_close, next_volume, next_currency]
     df.loc[i+1] = new_row
 
+
+
 #начальная страница
 @app.route('/')
 def home():
@@ -48,12 +50,6 @@ def df_info():
 
 @app.route('/summer_plot')
 def summer_plot():
-    # df['year'] = pd.DatetimeIndex(df['Date']).year
-    # summer = df.groupby('year').min()[['Open']].reset_index()
-    # summer.rename(columns={'Open': 'Min Open'}, inplace=True)
-    # summer['Max Open'] = df.groupby('year').max()[['Open']].reset_index(drop=True)
-    # summer['Mean Open'] = df.groupby('year').mean()[['Open']].reset_index(drop=True)
-
     df['year'] = pd.DatetimeIndex(df['Date']).year
     df['month'] = pd.DatetimeIndex(df['Date']).month
     summer = df.loc[(df['month'] >= 6) & (df['month'] <= 8)].groupby('month').min()[['Open']].reset_index()
@@ -102,27 +98,6 @@ def year_open():
     select_year['Max Open'] = df.loc[df['year'] == int(data['year'])].groupby('year').max()[['Open']]
     select_year['Mean Open'] = df.loc[df['year'] == int(data['year'])].groupby('year').mean()[['Open']].round(2)
     return task3 + select_year.to_html(header="true", table_id="table")
-
-# @app.route('/plot.png')
-# def plot_png():
-#     fig = create_figure()
-#     output = io.BytesIO()
-#     FigureCanvas(fig).print_png(output)
-#     return Response(output.getvalue(), mimetype='image/png')
-#
-# def create_figure():
-#     fig, ax = plt.subplots(figsize = (6,4))
-#     fig.patch.set_facecolor('#E8E5DA')
-#
-#     x = df.head().Date
-#     y = df.head().Open
-#
-#     ax.bar(x, y, color = "#304C89")
-#
-#     plt.xticks(rotation = 30, size = 5)
-#     plt.ylabel("Expected Clean Sheets", size = 5)
-#
-#     return fig
 
 
 
