@@ -5,18 +5,16 @@
     </head>
     <body>
         <div align="center">
-            <form action='http://127.0.0.1:5000/predict' method=get>
-                <h2>Введите цену открытия (X):</h2>
-                <input type=text size=27 name=open><br>
-                <input type=submit value='Прогнозировать время года'>
+            <h2>Кластеризация цены закратия и объёма методом k-средних</h2><br><br>
+            <form action='/plot_clustering' method="GET">
+                <h4>Выберите диапазон строк:</h4>
+                <input type="number" size="5" name="str_from" min=0 max=5700 value=0>
+                <input type="number" size="5" name="str_to" min=50 max=5745 value=5745>
+                <h4>Выберите количество кластеров:</h4>
+                <input type="number" size="5" name="cluster_count" min=2 max=10 value=3>
+                <br><input type="submit" value="OK" size="20">
             </form>
-            <form action='http://127.0.0.1:5000/tree_season' method=get>
-                <input type=submit value='Дерево решений'>
-            </form>
-                        <form action='http://127.0.0.1:5000/model_evaluation' method=get>
-                <input type=submit value='Вывод'>
-            </form>
-            <form action='http://127.0.0.1:5000/seasons_of_years' method=get>
+            <form action='http://127.0.0.1:5000/dataframe' method=get>
                 <input type=submit value='Справочник'>
             </form>
         </div>
