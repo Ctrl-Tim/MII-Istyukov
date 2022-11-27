@@ -64,6 +64,7 @@ def after_clustering(from_str, to_str, cluster_count):
     plt.ylabel("Volume")
 
     tmpfile = BytesIO()  # создание временного файла
+    plt.title("После кластеризации")
     plt.savefig(tmpfile, format='png')
     plt.clf()
     plt.switch_backend('agg')
@@ -78,6 +79,7 @@ def before_clustering(from_str, to_str):
     plt.scatter(df['Close'].iloc[from_str:to_str], df['Volume'].iloc[from_str:to_str], color='#76c2b4')
 
     tmpfile = BytesIO()  # создание временного файла
+    plt.title("До кластеризации")
     plt.savefig(tmpfile, format='png')
     plt.clf()
     plt.switch_backend('agg')
