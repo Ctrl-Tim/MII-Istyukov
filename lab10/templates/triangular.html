@@ -1,0 +1,93 @@
+<html>
+<head>
+    <script type='text/javascript'>
+        function addRatings(){
+            // Generate a dynamic number of inputs
+            var number = document.getElementById("count").value;
+            // Get the element where the inputs will be added to
+            var container = document.getElementById("container");
+            // Remove every children it had before
+            while (container.hasChildNodes()) {
+                container.removeChild(container.lastChild);
+            }
+            if(number > 2 && number <= 5) {
+                for (i=2;i<number;i++){
+                    // Append a node with a random text
+                    container.appendChild(document.createTextNode((i+1) + " оценка "));
+                    // Create an <input> element, set its type and name attributes
+                    var name = document.createElement("input");
+                    name.type = "name";
+                    name.name = "record" + i;
+                    container.appendChild(name);
+
+                    // Поле min
+                    container.appendChild(document.createElement("p"));
+                    container.appendChild(document.createTextNode(" min "));
+                    var min = document.createElement("input");
+                    min.type = "text";
+                    min.name = "min" + i;
+                    min.size = 3;
+                    container.appendChild(min);
+
+                    // Поле mode
+                    container.appendChild(document.createTextNode(" mode "));
+                    var mode = document.createElement("input");
+                    mode.type = "text";
+                    mode.name = "mode" + i;
+                    mode.size = 3;
+                    container.appendChild(mode);
+
+                    // Поле max
+                    container.appendChild(document.createTextNode(" max "));
+                    var max = document.createElement("input");
+                    max.type = "text";
+                    max.name = "max" + i;
+                    max.size = 3;
+                    container.appendChild(max);
+
+                    // Append a line break
+                    container.appendChild(document.createElement("br"));
+                    container.appendChild(document.createElement("br"));
+                    container.appendChild(document.createElement("br"));
+                    container.appendChild(document.createElement("br"));
+                }
+            }
+            var buttonNext = document.createElement("input");
+                    buttonNext.type = "submit";
+                    buttonNext.value = "Далее"
+                    container.appendChild(buttonNext);
+
+
+        }
+    </script>
+</head>
+<body>
+    <div style="text-align: center;">
+    <form action='http://127.0.0.1:5000/plot' method=get>
+            <h1>Оценка эффективности продаж</h1>
+            <h2>Нечёткая логика</h2>
+            <h3>Треугольное распределние</h3>
+            <h3>(в числовых полях кол-во клиентов)</h3>
+            <h4>Введите количество оценок: (max=5)</h4>
+            <input type="text" id="count" name="count" value="2"><br/>
+            <a href="#" id="ratingdetails" onclick="addRatings()">Ок</a><br/><br/>
+
+            1 оценка <input type="name" id="record0" name="record0" value="Слабовато"><p>
+            min <input type="text" id="min0" name="min0" size="3" value="10">
+            mode <input type="text" id="mode0" name="mode0" size="3" value="30">
+            max <input type="text" id="max0" name="max0" size="3" value="60"><br><br><br><br>
+
+            2 оценка <input type="name" id="record1" name="record1" value="Можно и лучше"><p>
+            min <input type="text" id="min1" name="min1" size="3" value="50">
+            mode <input type="text" id="mode1" name="mode1" size="3" value="90">
+            max <input type="text" id="max1" name="max1" size="3" value="110"><br><br><br>
+            <div id="container"/>
+        <input type=submit value='Далее'>
+    </form>
+    <br><br>
+    </div>
+    <form action='http://127.0.0.1:5000/' method=get>
+        <input type=submit value='На главную'>
+    </form>
+</body>
+</html>
