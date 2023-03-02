@@ -11,7 +11,7 @@ SelectionFunc = Callable[[Population, FitnessFunc], Tuple[Genome, Genome]]
 CrossoverFunc = Callable[[Genome, Genome], Tuple[Genome, Genome]]
 MutationFunc = Callable[[Genome], Genome]
 City = namedtuple('City', ['name', 'value', 'distance'])
-y = 5000
+y = 3000
 
 cities = [
     City('Ульяновск', 617, 10),
