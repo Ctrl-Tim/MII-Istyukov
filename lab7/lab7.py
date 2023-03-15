@@ -13,9 +13,6 @@ app = Flask('__name__')
 
 df = pd.read_csv("coffee.csv")
 
-#read csv, and split on "," the line
-csv_file = csv.reader(open('coffee.csv', "r"), delimiter=",")
-
 #начальная страница
 @app.route('/')
 def home():
